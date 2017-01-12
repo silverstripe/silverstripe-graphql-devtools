@@ -5,6 +5,7 @@ namespace SilverStripe\GraphQLDevTools;
 use SilverStripe\Control\Controller as BaseController;
 use SilverStripe\Control\Director;
 use SilverStripe\View\Requirements;
+use SilverStripe\GraphQL\Controller;
 
 class GraphiQLController extends BaseController
 {
@@ -46,6 +47,6 @@ var GRAPHQL_ROUTE = '{$route}';
 JS
         );
 
-        Requirements::javascript(GRAPHQL_DIR.'/client/dist/graphiql.js');
+        Requirements::javascript(GRAPHQL_DEVTOOLS_DIR.'/client/dist/graphiql.js');
     }
 }
