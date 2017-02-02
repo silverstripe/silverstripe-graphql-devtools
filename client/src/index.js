@@ -6,10 +6,11 @@ import 'graphiql/graphiql.css';
 
 function graphQLFetcher(graphQLParams) {
   const baseURL = document.querySelector('base').href;
-  return fetch(`${baseURL}/${GRAPHQL_ROUTE}/`, {
+  return fetch(`${baseURL}${GRAPHQL_ROUTE}/`, {
     method: 'post',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(graphQLParams),
+    credentials: 'same-origin'
   }).then(response => response.json());
 }
 
