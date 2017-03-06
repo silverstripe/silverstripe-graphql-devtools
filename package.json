@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Tools to help developers building new applications on SilverStripe’s GraphQL API",
   "scripts": {
-    "build": "webpack --bail"
+    "build": "webpack --bail --progress"
   },
   "dependencies": {
     "babel": "^6.5.2",

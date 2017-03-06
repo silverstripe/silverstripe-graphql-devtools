@@ -3,23 +3,23 @@ var PRODUCTION = process.env.NODE_ENV === 'production';
 
 var devPlugins = [];
 var prodPlugins = [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        unused: false,
-        warnings: false,
-      },
-      output: {
-        beautify: false,
-        semicolons: false,
-        comments: false,
-        max_line_len: 200,
-      },
-    }),
-	new webpack.DefinePlugin({
-	  "process.env": { 
-	     NODE_ENV: JSON.stringify("production") 
-	   }
-	})    
+  new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      unused: false,
+      warnings: false,
+    },
+    output: {
+      beautify: false,
+      semicolons: false,
+      comments: false,
+      max_line_len: 200,
+    },
+  }),
+  new webpack.DefinePlugin({
+    "process.env": {
+      NODE_ENV: JSON.stringify("production")
+    }
+  })
 ];
 
 module.exports = {
@@ -47,7 +47,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-  
-  ].concat(PRODUCTION ? prodPlugins : devPlugins)
+  plugins: PRODUCTION ? prodPlugins : devPlugins
 };
