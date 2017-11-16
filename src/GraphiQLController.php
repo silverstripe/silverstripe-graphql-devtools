@@ -47,6 +47,6 @@ var GRAPHQL_ROUTE = '{$route}';
 JS
         );
 
-        Requirements::javascript(GRAPHQL_DEVTOOLS_DIR.'/client/dist/graphiql.js');
+        Requirements::javascript('silverstripe/graphql-devtools: client/dist/graphiql.js');
     }
 }

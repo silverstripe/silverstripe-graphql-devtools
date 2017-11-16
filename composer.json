@@ -1,7 +1,7 @@
 {
   "name": "silverstripe/graphql-devtools",
   "description": "Tools to help developers building new applications on SilverStripe’s GraphQL API",
-  "type": "silverstripe-module",
+  "type": "silverstripe-vendormodule",
   "require": {
     "silverstripe/graphql": "*"
   },
@@ -9,6 +9,11 @@
     "psr-4": {
       "SilverStripe\\GraphQLDevTools\\": "src/"
     }
+  },
+  "extra": {
+    "expose": [
+      "client/dist"
+    ]
   },
   "config": {
     "process-timeout": 600
