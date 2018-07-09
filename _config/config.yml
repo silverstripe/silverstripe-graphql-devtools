@@ -7,3 +7,5 @@ SilverStripe\Dev\DevelopmentAdmin:
   registered_controllers:
     graphiql:
       controller: 'SilverStripe\GraphQLDevTools\GraphiQLController'
+SilverStripe\GraphQLDevTools\GraphiQLController:
+  default_route: 'graphql'

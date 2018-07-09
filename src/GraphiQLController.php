@@ -27,13 +27,16 @@ class GraphiQLController extends BaseController
         }
 
         $routes = Director::config()->get('rules');
-        $route = null;
+        $route = $this->getRequest()->getVar('endpoint') ?: $this->config()->default_route;
 
-        foreach ($routes as $pattern => $controllerInfo) {
-            $routeClass = (is_string($controllerInfo)) ? $controllerInfo : $controllerInfo['Controller'];
-            if ($routeClass == Controller::class || is_subclass_of($routeClass, Controller::class)) {
-                $route = $pattern;
-                break;
+        // Legacy. Find the first route mapped to the controller.
+        if (!$route) {
+            foreach ($routes as $pattern => $controllerInfo) {
+                $routeClass = (is_string($controllerInfo)) ? $controllerInfo : $controllerInfo['Controller'];
+                if ($routeClass == Controller::class || is_subclass_of($routeClass, Controller::class)) {
+                    $route = $pattern;
+                    break;
+                }
             }
         }
 
@@ -41,6 +44,7 @@ class GraphiQLController extends BaseController
             throw new \RuntimeException("There are no routes set up for a GraphQL server. You will need to add one to the SilverStripe\Control\Director.rules config setting.");
         }
 
+        $route = trim($route, '/');
         Requirements::customScript(
             <<<JS
 var GRAPHQL_ROUTE = '{$route}';
