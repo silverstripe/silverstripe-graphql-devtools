@@ -4,6 +4,7 @@ namespace SilverStripe\GraphQLDevTools;
 
 use SilverStripe\Control\Controller as BaseController;
 use SilverStripe\Control\Director;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\View\Requirements;
 use SilverStripe\GraphQL\Controller;
 
@@ -45,9 +46,13 @@ class GraphiQLController extends BaseController
         }
 
         $route = trim($route, '/');
+        $securityID = Controller::config()->enable_csrf_protection
+            ? "'" . SecurityToken::inst()->getValue() . "'"
+            : 'null';
         Requirements::customScript(
             <<<JS
 var GRAPHQL_ROUTE = '{$route}';
+var SECURITY_ID = $securityID;
 JS
         );
 

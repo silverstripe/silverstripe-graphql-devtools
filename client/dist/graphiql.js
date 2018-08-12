@@ -66,9 +66,16 @@
 
 	function graphQLFetcher(graphQLParams) {
 	  var baseURL = document.querySelector('base').href;
+	  var headers = {
+	    'Content-Type': 'application/json'
+	  };
+	  if (SECURITY_ID) {
+	    headers['X-CSRF-TOKEN'] = SECURITY_ID;
+	  }
+
 	  return (0, _isomorphicFetch2.default)('' + baseURL + GRAPHQL_ROUTE + '/', {
 	    method: 'post',
-	    headers: { 'Content-Type': 'application/json' },
+	    headers: headers,
 	    body: JSON.stringify(graphQLParams),
 	    credentials: 'same-origin'
 	  }).then(function (response) {
