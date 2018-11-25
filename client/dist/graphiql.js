@@ -65,26 +65,59 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function graphQLFetcher(graphQLParams) {
-	  var baseURL = document.querySelector('base').href;
-	  var headers = {
-	    'Content-Type': 'application/json'
-	  };
-	  if (SECURITY_ID) {
-	    headers['X-CSRF-TOKEN'] = SECURITY_ID;
-	  }
+	    var baseURL = document.querySelector('base').href;
+	    var headers = {
+	        'Content-Type': 'application/json'
+	    };
+	    if (SECURITY_ID) {
+	        headers['X-CSRF-TOKEN'] = SECURITY_ID;
+	    }
 
-	  return (0, _isomorphicFetch2.default)('' + baseURL + GRAPHQL_ROUTE + '/', {
-	    method: 'post',
-	    headers: headers,
-	    body: JSON.stringify(graphQLParams),
-	    credentials: 'same-origin'
-	  }).then(function (response) {
-	    return response.json();
-	  });
+	    return (0, _isomorphicFetch2.default)('' + baseURL + GRAPHQL_ROUTE + '/', {
+	        method: 'post',
+	        headers: headers,
+	        body: JSON.stringify(graphQLParams),
+	        credentials: 'same-origin'
+	    }).then(function (response) {
+	        return response.json();
+	    });
+	}
+
+	function changeGraphQLEndpoint(event) {
+	    window.location.href = '/dev/graphiql?endpoint=' + encodeURI(event.target.value);
 	}
 
 	document.addEventListener('DOMContentLoaded', function () {
-	  (0, _reactDom.render)(_react2.default.createElement(_graphiql2.default, { fetcher: graphQLFetcher }), document.getElementById('graphiql'));
+	    (0, _reactDom.render)(_react2.default.createElement(
+	        _graphiql2.default,
+	        { fetcher: graphQLFetcher },
+	        _react2.default.createElement(
+	            _graphiql2.default.Logo,
+	            null,
+	            'SilverStripe Graph',
+	            _react2.default.createElement(
+	                'i',
+	                null,
+	                'i'
+	            ),
+	            'QL'
+	        ),
+	        GRAPHQL_ROUTES.length > 1 && _react2.default.createElement(
+	            _graphiql2.default.Toolbar,
+	            null,
+	            _react2.default.createElement(
+	                'select',
+	                { name: 'endpoint', onChange: changeGraphQLEndpoint, value: GRAPHQL_ROUTE },
+	                GRAPHQL_ROUTES.map(function (route) {
+	                    return _react2.default.createElement(
+	                        'option',
+	                        { key: route, value: route },
+	                        route
+	                    );
+	                })
+	            )
+	        )
+	    ), document.getElementById('graphiql'));
 	});
 
 /***/ },

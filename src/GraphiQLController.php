@@ -4,6 +4,8 @@ namespace SilverStripe\GraphQLDevTools;
 
 use SilverStripe\Control\Controller as BaseController;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Injector\InjectorNotFoundException;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\View\Requirements;
 use SilverStripe\GraphQL\Controller;
@@ -27,18 +29,12 @@ class GraphiQLController extends BaseController
             return;
         }
 
-        $routes = Director::config()->get('rules');
+        $routes = $this->findAvailableRoutes();
         $route = $this->getRequest()->getVar('endpoint') ?: $this->config()->default_route;
 
         // Legacy. Find the first route mapped to the controller.
-        if (!$route) {
-            foreach ($routes as $pattern => $controllerInfo) {
-                $routeClass = (is_string($controllerInfo)) ? $controllerInfo : $controllerInfo['Controller'];
-                if ($routeClass == Controller::class || is_subclass_of($routeClass, Controller::class)) {
-                    $route = $pattern;
-                    break;
-                }
-            }
+        if (!$route && !empty($routes)) {
+            $route = $routes[0];
         }
 
         if (!$route) {
@@ -46,16 +42,42 @@ class GraphiQLController extends BaseController
         }
 
         $route = trim($route, '/');
+        $jsonRoutes = json_encode($routes);
         $securityID = Controller::config()->enable_csrf_protection
             ? "'" . SecurityToken::inst()->getValue() . "'"
             : 'null';
         Requirements::customScript(
             <<<JS
 var GRAPHQL_ROUTE = '{$route}';
+var GRAPHQL_ROUTES = $jsonRoutes;
 var SECURITY_ID = $securityID;
 JS
         );
 
         Requirements::javascript('silverstripe/graphql-devtools: client/dist/graphiql.js');
+    }
+
+    /**
+     * Find all available graphql routes
+     * @return string[]
+     */
+    protected function findAvailableRoutes()
+    {
+        $routes = [];
+        $rules = Director::config()->get('rules');
+
+        foreach ($rules as $pattern => $controllerInfo) {
+            $routeClass = (is_string($controllerInfo)) ? $controllerInfo : $controllerInfo['Controller'];
+
+            try {
+                $routeController = Injector::inst()->get($routeClass);
+                if ($routeController instanceof Controller) {
+                    $routes[] = $pattern;
+                }
+            } catch (InjectorNotFoundException $ex) {
+            }
+
+        }
+        return $routes;
     }
 }

@@ -22,9 +22,22 @@ function graphQLFetcher(graphQLParams) {
   }).then(response => response.json());
 }
 
+function changeGraphQLEndpoint(event) {
+    window.location.href = '/dev/graphiql?endpoint=' + encodeURI(event.target.value);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 	render(
-		<GraphiQL fetcher={graphQLFetcher} />,
+        <GraphiQL fetcher={graphQLFetcher}>
+            <GraphiQL.Logo>SilverStripe Graph<i>i</i>QL</GraphiQL.Logo>
+            {GRAPHQL_ROUTES.length > 1 && <GraphiQL.Toolbar>
+                <select name="endpoint" onChange={changeGraphQLEndpoint} value={GRAPHQL_ROUTE}>
+                    {GRAPHQL_ROUTES.map( (route) =>
+                        <option key={route} value={route}>{route}</option>
+                    )}
+                </select>
+            </GraphiQL.Toolbar>}
+        </GraphiQL>,
 		document.getElementById('graphiql')
 	);
 });
