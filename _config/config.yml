@@ -1,7 +1,5 @@
 ---
 Name: graphql-devtool-routes
-only:
-  environment: 'dev'
 ---
 SilverStripe\Dev\DevelopmentAdmin:
   registered_controllers:
