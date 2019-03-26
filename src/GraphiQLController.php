@@ -18,16 +18,12 @@ class GraphiQLController extends BaseController
     protected $template = 'GraphiQL';
 
     /**
-     * Initialise the controller, sanity check, load javascript
+     * Initialise the controller, sanity check, load javascript.
+     * Note that permission checks are handled by DevelopmentAdmin.
      */
     public function init()
     {
         parent::init();
-
-        if (!Director::isDev()) {
-            $this->httpError(403, 'The GraphiQL tool is only available in dev mode');
-            return;
-        }
 
         $routes = $this->findAvailableRoutes();
         $route = $this->getRequest()->getVar('endpoint') ?: $this->config()->default_route;
