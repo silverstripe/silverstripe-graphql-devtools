@@ -35,3 +35,6 @@ By default, the tool has the same restrictions as other development tools like `
  setting. Otherwise, you can specify an endpoint per request using the `GET` variable `endpoint`, e.g.
  `/dev/graphiql?endpoint=admin/graphql`.
  
+## Showing the schema
+
+To see a text representation of your shema, you can use the `/dev/schemaprint?schema=mySchema` URL.

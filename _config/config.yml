@@ -5,5 +5,7 @@ SilverStripe\Dev\DevelopmentAdmin:
   registered_controllers:
     graphiql:
       controller: 'SilverStripe\GraphQLDevTools\GraphiQLController'
+    schemaprint:
+      controller: 'SilverStripe\GraphQLDevTools\SchemaPrintController'
 SilverStripe\GraphQLDevTools\GraphiQLController:
   default_route: 'graphql'
