@@ -26,7 +26,8 @@ class GraphiQLController extends BaseController
         parent::init();
 
         $routes = $this->findAvailableRoutes();
-        $route = $this->getRequest()->getVar('endpoint') ?: $this->config()->default_route;
+        $defaultRoute = in_array($this->config()->default_route, $routes) ? $this->config()->default_route : $routes[0];
+        $route = $this->getRequest()->getVar('endpoint') ?: $defaultRoute;
 
         // Legacy. Find the first route mapped to the controller.
         if (!$route && !empty($routes)) {
