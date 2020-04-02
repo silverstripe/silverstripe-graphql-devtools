@@ -40,9 +40,8 @@ class GraphiQLController extends BaseController
 
         $route = trim($route, '/');
         $jsonRoutes = json_encode($routes);
-        $securityID = Controller::config()->enable_csrf_protection
-            ? "'" . SecurityToken::inst()->getValue() . "'"
-            : 'null';
+        $securityID = "'" . SecurityToken::inst()->getValue() . "'";
+        
         Requirements::customScript(
             <<<JS
 var GRAPHQL_ROUTE = '{$route}';
