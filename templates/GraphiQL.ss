@@ -49,14 +49,14 @@ $RouteSwitcher.Field
         React.createElement(GraphiQL, {
             fetcher: graphQLFetcher,
             onToggleDocs(open) {
-                router.style.right = open ? '400px' : '100px';
+                router.style.right = open ? '370px' : '100px';
             }
         }),
         document.getElementById('graphiql'),
         function () {
             // Hack to extract the state out of the GraphQL component.
             if (document.querySelector('.docExplorerWrap')) {
-                router.style.right = '400px';
+                router.style.right = '370px';
             }
         }
     );
