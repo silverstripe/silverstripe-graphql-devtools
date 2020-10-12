@@ -6,6 +6,8 @@ use SilverStripe\Control\Controller as BaseController;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Injector\InjectorNotFoundException;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\ORM\ArrayLib;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\View\Requirements;
 use SilverStripe\GraphQL\Controller;
@@ -17,14 +19,8 @@ class GraphiQLController extends BaseController
      */
     protected $template = 'GraphiQL';
 
-    /**
-     * Initialise the controller, sanity check, load javascript.
-     * Note that permission checks are handled by DevelopmentAdmin.
-     */
-    public function init()
+    public function getRouteSwitcher(): DropdownField
     {
-        parent::init();
-
         $routes = $this->findAvailableRoutes();
         $defaultRoute = in_array($this->config()->default_route, $routes) ? $this->config()->default_route : $routes[0];
         $route = $this->getRequest()->getVar('endpoint') ?: $defaultRoute;
@@ -39,25 +35,15 @@ class GraphiQLController extends BaseController
         }
 
         $route = trim($route, '/');
-        $jsonRoutes = json_encode($routes);
-        $securityID = "'" . SecurityToken::inst()->getValue() . "'";
-        
-        Requirements::customScript(
-            <<<JS
-var GRAPHQL_ROUTE = '{$route}';
-var GRAPHQL_ROUTES = $jsonRoutes;
-var SECURITY_ID = $securityID;
-JS
-        );
+        $values = ArrayLib::valuekey($routes);
 
-        Requirements::javascript('silverstripe/graphql-devtools: client/dist/graphiql.js');
+        return DropdownField::create('route', '', $values, $route);
     }
-
     /**
      * Find all available graphql routes
      * @return string[]
      */
-    protected function findAvailableRoutes()
+    protected function findAvailableRoutes(): array
     {
         $routes = [];
         $rules = Director::config()->get('rules');

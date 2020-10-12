@@ -1,9 +1,13 @@
 ---
 Name: graphql-devtool-routes
+After:
+  - 'graphql-dev'
 ---
-SilverStripe\Dev\DevelopmentAdmin:
+SilverStripe\GraphQL\Dev\DevelopmentAdmin:
   registered_controllers:
-    graphiql:
+    ide:
       controller: 'SilverStripe\GraphQLDevTools\GraphiQLController'
+      links:
+        ide: Run the GraphQL IDE
 SilverStripe\GraphQLDevTools\GraphiQLController:
   default_route: 'graphql'
