@@ -14,7 +14,7 @@ $ composer require --dev silverstripe/graphql-devtools
 
 This module adds an implementation of [graphiql](https://github.com/graphql/graphiql), an in-browser IDE for GraphQL servers. It provides browseable documentation of your schema, as well as autocomplete and syntax-checking of your queries.
  
-It can be accessed at `/dev/graphiql/`.
+It can be accessed at `/dev/graphql/ide/`.
 
 By default, the tool has the same restrictions as other development tools like `dev/build`:
 
