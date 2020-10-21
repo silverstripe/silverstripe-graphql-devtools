@@ -3,42 +3,48 @@
 namespace SilverStripe\GraphQLDevTools;
 
 use SilverStripe\Control\Controller as BaseController;
+use SilverStripe\GraphQL\Controller as GraphQLController;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Injector\InjectorNotFoundException;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\ORM\ArrayLib;
+use SilverStripe\Core\Path;
 use SilverStripe\Security\SecurityToken;
-use SilverStripe\View\Requirements;
-use SilverStripe\GraphQL\Controller;
 
-class GraphiQLController extends BaseController
+class Controller extends BaseController
 {
+    private static $default_route = 'graphql';
+
     /**
      * @var string
      */
-    protected $template = 'GraphiQL';
+    protected $template = 'DevTools';
 
-    public function getRouteSwitcher(): DropdownField
+    public function getTabsJSON(): string
     {
         $routes = $this->findAvailableRoutes();
-        $defaultRoute = in_array($this->config()->default_route, $routes) ? $this->config()->default_route : $routes[0];
-        $route = $this->getRequest()->getVar('endpoint') ?: $defaultRoute;
-
-        // Legacy. Find the first route mapped to the controller.
-        if (!$route && !empty($routes)) {
-            $route = $routes[0];
-        }
-
-        if (!$route) {
+        $defaultRoute = in_array($this->config()->get('default_route'), $routes)
+            ? $this->config()->get('default_route')
+            : ($routes[0] ?? null);
+        if (!$defaultRoute) {
             throw new \RuntimeException("There are no routes set up for a GraphQL server. You will need to add one to the SilverStripe\Control\Director.rules config setting.");
         }
+        array_unshift($routes, $defaultRoute);
+        $routes = array_unique($routes);
+        $tabs = [];
+        foreach ($routes as $route) {
+            $tabs[] = [
+                'endpoint' => Director::absoluteURL($route),
+                'query' => '',
+                'name' => '/' . $route,
+                'headers' => [
+                    'X-CSRF-TOKEN' => SecurityToken::inst()->getValue(),
+                ]
+            ];
+        }
 
-        $route = trim($route, '/');
-        $values = ArrayLib::valuekey($routes);
-
-        return DropdownField::create('route', '', $values, $route);
+        return json_encode($tabs);
     }
+
     /**
      * Find all available graphql routes
      * @return string[]
@@ -53,8 +59,8 @@ class GraphiQLController extends BaseController
 
             try {
                 $routeController = Injector::inst()->get($routeClass);
-                if ($routeController instanceof Controller) {
-                    $routes[] = $pattern;
+                if ($routeController instanceof GraphQLController) {
+                    $routes[] = Path::normalise($pattern, true);
                 }
             } catch (InjectorNotFoundException $ex) {
             }

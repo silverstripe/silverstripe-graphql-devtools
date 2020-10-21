@@ -6,8 +6,8 @@ After:
 SilverStripe\GraphQL\Dev\DevelopmentAdmin:
   registered_controllers:
     ide:
-      controller: 'SilverStripe\GraphQLDevTools\GraphiQLController'
+      controller: 'SilverStripe\GraphQLDevTools\Controller'
       links:
         ide: Run the GraphQL IDE
-SilverStripe\GraphQLDevTools\GraphiQLController:
+SilverStripe\GraphQLDevTools\Controller:
   default_route: 'graphql'
