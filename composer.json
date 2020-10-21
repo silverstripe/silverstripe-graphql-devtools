@@ -3,7 +3,7 @@
   "description": "Tools to help developers building new applications on SilverStripe’s GraphQL API",
   "type": "silverstripe-vendormodule",
   "require": {
-    "silverstripe/graphql": "4.x-dev"
+    "silverstripe/graphql": "*"
   },
   "autoload": {
     "psr-4": {
