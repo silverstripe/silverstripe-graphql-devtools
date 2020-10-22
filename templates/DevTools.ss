@@ -5,14 +5,52 @@
     <meta charset=utf-8/>
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
     <title>GraphQL IDE | Silverstripe CMS</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/graphql-playground-react/build/static/css/index.css" />
-    <link rel="shortcut icon" href="//cdn.jsdelivr.net/npm/graphql-playground-react/build/favicon.png" />
-    <script src="//cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
+    <link rel="shortcut icon" href="$resourceURL('silverstripe/graphql-devtools: client/favicon.png')" />
+    <% require javascript('silverstripe/graphql-devtools: client/bundle.js') %>
 </head>
 
 <body>
 <div id="root">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Open Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: rgba(0,0,0,.8);
+            line-height: 1.5;
+            height: 100vh;
+            letter-spacing: 0.53px;
+            margin-right: -1px !important;
+        }
+
+        #root {
+            height: 100%;
+        }
+
+        html, body, p, a, h1, h2, h3, h4, ul, pre, code {
+            margin: 0;
+            padding: 0;
+            color: inherit;
+        }
+
+        a:active, a:focus, button:focus, input:focus {
+            outline: none;
+        }
+
+        input, button, submit {
+            border: none;
+        }
+
+        input, button, pre {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
         body {
             background-color: rgb(23, 42, 58);
             font-family: Open Sans, sans-serif;
@@ -43,21 +81,17 @@
             font-weight: 400;
         }
     </style>
-    <img src='//cdn.jsdelivr.net/npm/graphql-playground-react/build/logo.png' alt=''>
+    <img src="$resourceURL('silverstripe/graphql-devtools: client/logo.png')" alt=''>
     <div class="loading"> Loading
         <span class="title">GraphQL Playground</span>
     </div>
 </div>
-<script>
-    var SECURITY_ID = '$SecurityID';
-    var GRAPHQL_ROUTE = '$DefaultRoute';
-</script>
 <script>window.addEventListener('load', function (event) {
     GraphQLPlayground.init(document.getElementById('root'), {
-        endpoint: GRAPHQL_ROUTE,
+        endpoint: '$DefaultRoute',
         settings: {
             'request.globalHeaders': {
-                'X-CSRF-TOKEN': SECURITY_ID
+                'X-CSRF-TOKEN': '$SecurityID'
             },
             'request.credentials': 'include',
         },
