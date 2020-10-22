@@ -31,6 +31,6 @@ Except:
 SilverStripe\Dev\DevelopmentAdmin:
   registered_controllers:
     graphiql:
-      controller: 'SilverStripe\GraphQLDevTools\GraphiQLController'
-SilverStripe\GraphQLDevTools\GraphiQLController:
+      controller: 'SilverStripe\GraphQLDevTools\Controller'
+SilverStripe\GraphQLDevTools\Controller:
   default_route: 'graphql'
