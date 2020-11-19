@@ -33,15 +33,40 @@ By default, the tool has the same restrictions as other development tools like `
  
  <img src="https://github.com/graphql/graphiql/raw/master/resources/graphiql.png">
  
- ## Multiple schemas
+ ## Configuration
  
  In most installations of SilverStripe, there are at least two GraphQL servers running -- one
- for the admin (`admin/graphql`) and one for the user space (`/graphql`). Each of these
- endpoints will get its own tab in the IDE.
+ for the admin (`admin/graphql`) and one for the user space (`/graphql`). By default, only
+ the `default` schema will show, but this is configurable.
  
- To set the default tab (the leftmost one is active by default), use the
- `SilverStripe\GraphQLDevTools\Controller.default_route`
- config setting.
+ ### Showing multiple schemas
+ 
+ **Important**: Due to a limitation in the GraphQL Playground library, showing multiple schemas
+ will disable the persistence of IDE state across page refreshes.
+ 
+ You can configure the visible schemas in the controller.
+
+Show a select list of schemas 
+ ```yaml
+SilverStripe\GraphQLDevTools\Controller:
+  # show two schemas
+  schemas:
+    - default
+    - admin
+  # default schema that is selected
+  default_schema: admin 
+```
+
+Show all schemas
+ ```yaml
+SilverStripe\GraphQLDevTools\Controller:
+  # show two schemas
+  schemas: '*'
+  default_schema: default 
+```
+
+Further, you can override the config in the request, by using `?schema=<schemaName>`,
+e.g. `http://example.com/dev/graphql/ide?schema=mySchema`.
  
  ## Upgrading and maintaining the IDE
  

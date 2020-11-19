@@ -3,53 +3,95 @@
 namespace SilverStripe\GraphQLDevTools;
 
 use SilverStripe\Control\Controller as BaseController;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\GraphQL\Controller as GraphQLController;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Injector\InjectorNotFoundException;
 use SilverStripe\Core\Path;
+use SilverStripe\GraphQL\Schema\Schema;
 use SilverStripe\Security\SecurityToken;
 
 class Controller extends BaseController
 {
-    private static $default_route = 'graphql';
+    /**
+     * @var string
+     * @config
+     */
+    private static $default_schema = 'default';
+
+    /**
+     * @var array
+     * @config
+     */
+    private static $schemas = [];
 
     /**
      * @var string
      */
     protected $template = 'DevTools';
 
-    public function getTabsJSON(): string
+    public function index(HTTPRequest $request)
     {
-        $routes = $this->findAvailableRoutes();
-        $defaultRoute = in_array($this->config()->get('default_route'), $routes)
-            ? $this->config()->get('default_route')
-            : ($routes[0] ?? null);
-        if (!$defaultRoute) {
-            throw new \RuntimeException("There are no routes set up for a GraphQL server. You will need to add one to the SilverStripe\Control\Director.rules config setting.");
-        }
-        array_unshift($routes, $defaultRoute);
-        $routes = array_unique($routes);
-        $tabs = [];
-        foreach ($routes as $route) {
-            $tabs[] = [
-                'endpoint' => Director::absoluteURL($route),
-                'query' => '',
-                'name' => '/' . $route,
-                'headers' => [
-                    'X-CSRF-TOKEN' => SecurityToken::inst()->getValue(),
-                ]
-            ];
+        $routes = $this->getRoutes();
+        $json = null;
+        if (sizeof($routes) > 1) {
+            $tabs = [];
+            foreach ($routes as $route) {
+                $tabs[] = [
+                    'endpoint' => Director::absoluteURL($route),
+                    'query' => '',
+                    'name' => $route,
+                    'headers' => [
+                        'X-CSRF-TOKEN' => SecurityToken::inst()->getValue(),
+                    ]
+                ];
+            }
+
+            $json = json_encode($tabs);
         }
 
-        return json_encode($tabs);
+        return [
+            'Endpoint' => sizeof($routes) === 1 ? $routes[0] : null,
+            'TabsJSON' => $json,
+        ];
     }
 
+    private function getRoutes(): array
+    {
+        $schemaOverride = $this->getRequest()->getVar('schema');
+        if ($schemaOverride) {
+            $schemas = [$schemaOverride];
+        } else {
+            $schemas = $this->config()->get('schemas');
+        }
+        $routes = $this->findAvailableRoutes($schemas);
+        $defaultSchema = $this->config()->get('default_schema');
+        $defaultRoute = $routes[$defaultSchema] ?? null;
+        $allRoutes = array_values($routes);
+        if (!$defaultRoute) {
+            if (sizeof($allRoutes) === 1) {
+                $defaultRoute = $allRoutes[0];
+            } else {
+                throw new \RuntimeException(
+                    "Could not find your default schema '$defaultSchema'. You will need to add one
+                to the SilverStripe\Control\Director.rules config setting."
+                );
+            }
+        }
+
+        array_unshift($allRoutes, $defaultRoute);
+        $uniqueRoutes = array_unique($allRoutes);
+        return array_map(function ($route) {
+            return Path::join(Director::baseURL(), $route);
+        }, $uniqueRoutes);
+    }
     /**
      * Find all available graphql routes
-     * @return string[]
+     * @param array|string $schemas
+     * @return array
      */
-    protected function findAvailableRoutes(): array
+    protected function findAvailableRoutes($schemas = []): array
     {
         $routes = [];
         $rules = Director::config()->get('rules');
@@ -60,7 +102,12 @@ class Controller extends BaseController
             try {
                 $routeController = Injector::inst()->get($routeClass);
                 if ($routeController instanceof GraphQLController) {
-                    $routes[] = Path::normalise($pattern, true);
+                    $schemaKey = class_exists(Schema::class)
+                        ? $routeController->getSchema()->getSchemaKey()
+                        : $routeController->getManager()->getSchemaKey();
+                    if ($schemas === '*' || in_array($schemaKey, $schemas)) {
+                        $routes[$schemaKey] = Path::normalise($pattern, true);
+                    }
                 }
             } catch (InjectorNotFoundException $ex) {
             }
