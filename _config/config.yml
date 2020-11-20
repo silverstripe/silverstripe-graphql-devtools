@@ -4,8 +4,9 @@ After:
   - 'graphql-dev'
 ---
 SilverStripe\GraphQLDevTools\Controller:
-  default_route: 'graphql'
-
+  schemas:
+    - default
+  default_schema: default
 
 ---
 Name: graphql4-devtool-routes

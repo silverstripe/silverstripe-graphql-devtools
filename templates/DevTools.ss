@@ -88,14 +88,16 @@
 </div>
 <script>window.addEventListener('load', function (event) {
     GraphQLPlayground.init(document.getElementById('root'), {
-        endpoint: '$DefaultRoute',
+        endpoint: '$Endpoint',
         settings: {
             'request.globalHeaders': {
                 'X-CSRF-TOKEN': '$SecurityID'
             },
             'request.credentials': 'include',
         },
+        <% if $TabsJSON %>
         tabs: $TabsJSON.RAW
+        <% end_if %>
     })
 })</script>
 </body>
