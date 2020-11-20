@@ -44,6 +44,8 @@ By default, the tool has the same restrictions as other development tools like `
  **Important**: Due to a limitation in the GraphQL Playground library, showing multiple schemas
  will disable the persistence of IDE state across page refreshes.
  
+ **Also important**: When changing the available schemas, be sure to clear the local storage in your browser, otherwise, you'll get inconsistent state.
+ 
  You can configure the visible schemas in the controller.
 
 Show a select list of schemas 
