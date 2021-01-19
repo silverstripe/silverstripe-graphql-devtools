@@ -88,6 +88,9 @@
 </div>
 <script>window.addEventListener('load', function (event) {
     GraphQLPlayground.init(document.getElementById('root'), {
+        headers: {
+            'X-CSRF-TOKEN': '$SecurityID',
+        },
         endpoint: '$Endpoint',
         settings: {
             'request.globalHeaders': {
