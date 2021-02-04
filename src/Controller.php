@@ -103,7 +103,7 @@ class Controller extends BaseController
                 $routeController = Injector::inst()->get($routeClass);
                 if ($routeController instanceof GraphQLController) {
                     $schemaKey = class_exists(Schema::class)
-                        ? $routeController->getSchemaKey()
+                        ? $routeController->getSchema()->getSchemaKey()
                         : $routeController->getManager()->getSchemaKey();
                     if ($schemas === '*' || in_array($schemaKey, $schemas)) {
                         $routes[$schemaKey] = Path::normalise($pattern, true);
