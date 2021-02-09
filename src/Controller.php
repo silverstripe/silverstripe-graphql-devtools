@@ -6,6 +6,7 @@ use SilverStripe\Control\Controller as BaseController;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\GraphQL\Controller as GraphQLController;
 use SilverStripe\Control\Director;
+use SilverStripe\Control\Middleware\RequestHandlerMiddlewareAdapter;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Injector\InjectorNotFoundException;
 use SilverStripe\Core\Path;
@@ -101,6 +102,12 @@ class Controller extends BaseController
 
             try {
                 $routeController = Injector::inst()->get($routeClass);
+
+                // Add support for decoration via RequestHandlerMiddlewareAdapter
+                if ($routeController instanceof RequestHandlerMiddlewareAdapter) {
+                    $routeController = $routeController->getRequestHandler();
+                }
+
                 if ($routeController instanceof GraphQLController) {
                     $schemaKey = class_exists(Schema::class)
                         ? $routeController->getSchema()->getSchemaKey()
