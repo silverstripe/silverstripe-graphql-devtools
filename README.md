@@ -69,8 +69,23 @@ SilverStripe\GraphQLDevTools\Controller:
 
 Further, you can override the config in the request, by using `?schema=<schemaName>`,
 e.g. `http://example.com/dev/graphql/ide?schema=mySchema`.
- 
- ## Upgrading and maintaining the IDE
+
+## If you're using a custom controller for your GraphQL endpoint
+
+The IDE finds schemas by checking `Director` for routes that map to a `SilverStripe\GraphQL\Controller` instance.
+If for some reason you're using a custom controller, you might get an error: "Could not find your default schema 'default'. You will need to add one to the SilverStripe\Control\Director.rules config setting."
+
+To avoid this, you can explicitly map your graphql route to a schema in your Director config:
+
+```
+SilverStripe\Control\Director:
+  rules:
+    graphql:
+      Controller: '%$MyCustomController'
+      Schema: default
+```
+
+## Upgrading and maintaining the IDE
  
  The library running the IDE is [GraphQL Playground](https://github.com/graphql/graphql-playground).
  It is served from your local environment as an exposed resource. The

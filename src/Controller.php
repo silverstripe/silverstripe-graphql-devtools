@@ -98,7 +98,13 @@ class Controller extends BaseController
 
         foreach ($rules as $pattern => $controllerInfo) {
             $routeClass = (is_string($controllerInfo)) ? $controllerInfo : $controllerInfo['Controller'];
-
+            $explicitSchema = $controllerInfo['Schema'] ?? null;
+            if ($explicitSchema) {
+                if ($schemas === '*' || in_array($explicitSchema, $schemas)) {
+                    $routes[$explicitSchema] = Path::normalise($pattern, true);
+                }
+                continue;
+            }
             try {
                 $routeController = Injector::inst()->get($routeClass);
                 if ($routeController instanceof GraphQLController) {
