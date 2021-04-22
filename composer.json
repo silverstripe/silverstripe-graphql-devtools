@@ -15,7 +15,7 @@
 	  "dev-master": "1.x-dev"
     },
     "expose": [
-        "client/"
+        "client"
     ]
   },
   "config": {
