@@ -7,15 +7,20 @@
     <title>GraphQL IDE | Silverstripe CMS</title>
     <link rel="shortcut icon" href="$resourceURL('silverstripe/graphql-devtools: client/favicon.png')" />
     <% require javascript('silverstripe/graphql-devtools: client/bundle.js') %>
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body>
 <div id="root">
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
             font-family: 'Open Sans', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
