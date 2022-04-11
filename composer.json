@@ -2,8 +2,9 @@
   "name": "silverstripe/graphql-devtools",
   "description": "Tools to help developers building new applications on SilverStripe’s GraphQL API",
   "type": "silverstripe-vendormodule",
+  "license": "BSD-3-Clause",
   "require": {
-    "silverstripe/graphql": "*"
+    "silverstripe/graphql": "3 || 4"
   },
   "autoload": {
     "psr-4": {
