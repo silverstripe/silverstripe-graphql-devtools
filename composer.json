@@ -4,11 +4,19 @@
   "type": "silverstripe-vendormodule",
   "license": "BSD-3-Clause",
   "require": {
-    "silverstripe/graphql": "3 || 4"
+    "silverstripe/graphql": "3 || 4",
+    "symfony/finder": "^4 || ^5",
+    "symfony/filesystem": "^4 || ^5"
+    },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "squizlabs/php_codesniffer": "^3.0",
+    "silverstripe/versioned": "^1.0@dev"
   },
   "autoload": {
     "psr-4": {
-      "SilverStripe\\GraphQLDevTools\\": "src/"
+      "SilverStripe\\GraphQLDevTools\\": "src/",
+      "SilverStripe\\GraphQLDevTools\\Tests\\": "tests/"
     }
   },
   "extra": {
