@@ -6,6 +6,8 @@ use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\GraphQL\Schema\Storage\CodeGenerationStore;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\GraphQL\Schema\Logger;
 
 class ClearTest extends FunctionalTest
 {
@@ -18,7 +20,9 @@ class ClearTest extends FunctionalTest
     {
         parent::setUp();
         $this->originalDirName = CodeGenerationStore::config()->get('dirName');
+        Logger::singleton()->setVerbosity(Logger::EMERGENCY);
         CodeGenerationStore::config()->set('dirName', $this->dirName);
+
         $fs = new Filesystem();
         $fs->mkdir($this->absDirName);
     }
@@ -29,7 +33,7 @@ class ClearTest extends FunctionalTest
         CodeGenerationStore::config()->set('dirName', $this->originalDirName);
         $fs = new Filesystem();
         if ($fs->exists($this->absDirName)) {
-            $fs->remove($this->absDirName)
+            $fs->remove($this->absDirName);
         }
     }
 
