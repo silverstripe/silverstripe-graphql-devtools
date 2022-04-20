@@ -21,7 +21,6 @@ class Clear extends Controller
 
     public function clear(HTTPRequest $request): void
     {
-
         $logger = Injector::inst()->get(LoggerInterface::class . '.graphql-build');
         $dirName = CodeGenerationStore::config()->get('dirName');
         $expectedPath = BASE_PATH . DIRECTORY_SEPARATOR . $dirName;
@@ -47,6 +46,5 @@ class Clear extends Controller
         } else {
             $logger->info('Directory was not found. There is nothing to clear');
         }
-
     }
 }
