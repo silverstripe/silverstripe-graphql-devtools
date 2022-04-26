@@ -35,7 +35,7 @@ class Controller extends BaseController
     {
         $routes = $this->getRoutes();
         $json = null;
-        if (sizeof($routes) > 1) {
+        if (sizeof($routes ?? []) > 1) {
             $tabs = [];
             foreach ($routes as $route) {
                 $tabs[] = [
@@ -52,7 +52,7 @@ class Controller extends BaseController
         }
 
         return [
-            'Endpoint' => sizeof($routes) === 1 ? $routes[0] : null,
+            'Endpoint' => sizeof($routes ?? []) === 1 ? $routes[0] : null,
             'TabsJSON' => $json,
         ];
     }
@@ -68,9 +68,9 @@ class Controller extends BaseController
         $routes = $this->findAvailableRoutes($schemas);
         $defaultSchema = $this->config()->get('default_schema');
         $defaultRoute = $routes[$defaultSchema] ?? null;
-        $allRoutes = array_values($routes);
+        $allRoutes = array_values($routes ?? []);
         if (!$defaultRoute) {
-            if (sizeof($allRoutes) === 1) {
+            if (sizeof($allRoutes ?? []) === 1) {
                 $defaultRoute = $allRoutes[0];
             } else {
                 throw new \RuntimeException(
@@ -81,10 +81,10 @@ class Controller extends BaseController
         }
 
         array_unshift($allRoutes, $defaultRoute);
-        $uniqueRoutes = array_unique($allRoutes);
+        $uniqueRoutes = array_unique($allRoutes ?? []);
         return array_map(function ($route) {
             return Path::join(Director::baseURL(), $route);
-        }, $uniqueRoutes);
+        }, $uniqueRoutes ?? []);
     }
     /**
      * Find all available graphql routes
@@ -100,7 +100,7 @@ class Controller extends BaseController
             $routeClass = (is_string($controllerInfo)) ? $controllerInfo : $controllerInfo['Controller'];
             $explicitSchema = $controllerInfo['Schema'] ?? null;
             if ($explicitSchema) {
-                if ($schemas === '*' || in_array($explicitSchema, $schemas)) {
+                if ($schemas === '*' || in_array($explicitSchema, $schemas ?? [])) {
                     $routes[$explicitSchema] = Path::normalise($pattern, true);
                 }
                 continue;
@@ -111,7 +111,7 @@ class Controller extends BaseController
                     $schemaKey = class_exists(Schema::class)
                         ? $routeController->getSchemaKey()
                         : $routeController->getManager()->getSchemaKey();
-                    if ($schemas === '*' || in_array($schemaKey, $schemas)) {
+                    if ($schemas === '*' || in_array($schemaKey, $schemas ?? [])) {
                         $routes[$schemaKey] = Path::normalise($pattern, true);
                     }
                 }
