@@ -6,8 +6,8 @@ use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\GraphQL\Schema\Storage\CodeGenerationStore;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\GraphQL\Schema\Logger;
+use SilverStripe\GraphQL\Schema\Schema;
 
 class ClearTest extends FunctionalTest
 {
@@ -21,6 +21,11 @@ class ClearTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
+        if (!class_exists(Schema::class)) {
+            $this->markTestSkipped('GraphQL 4 test ' . __CLASS__ . ' skipped');
+            return;
+        }
+
         $this->originalDirName = CodeGenerationStore::config()->get('dirName');
         Logger::singleton()->setVerbosity(Logger::EMERGENCY);
         CodeGenerationStore::config()->set('dirName', $this->dirName);
@@ -60,5 +65,4 @@ class ClearTest extends FunctionalTest
         $this->get('dev/graphql/clear');
         $this->assertFalse($fs->exists($this->absDirName), 'GraphQL clear should not break on a non-existent folder');
     }
-
 }

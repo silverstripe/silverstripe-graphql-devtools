@@ -117,7 +117,6 @@ class Controller extends BaseController
                 }
             } catch (InjectorNotFoundException $ex) {
             }
-
         }
         return $routes;
     }

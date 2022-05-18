@@ -42,7 +42,6 @@ class Clear extends Controller
             } else {
                 $logger->info('Directory is already empty.');
             }
-
         } else {
             $logger->info('Directory was not found. There is nothing to clear');
         }
