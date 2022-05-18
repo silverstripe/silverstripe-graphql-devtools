@@ -4,7 +4,7 @@
   "type": "silverstripe-vendormodule",
   "license": "BSD-3-Clause",
   "require": {
-    "silverstripe/graphql": ^4",
+    "silverstripe/graphql": "^4",
     "symfony/finder": "^4 || ^5",
     "symfony/filesystem": "^4 || ^5"
     },
