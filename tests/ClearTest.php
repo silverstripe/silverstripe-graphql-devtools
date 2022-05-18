@@ -16,6 +16,8 @@ class ClearTest extends FunctionalTest
     private $dirName = 'test-graphql-generated';
     private $absDirName = BASE_PATH . DIRECTORY_SEPARATOR . 'test-graphql-generated';
 
+    protected $usesDatabase = true;
+
     protected function setUp(): void
     {
         parent::setUp();
