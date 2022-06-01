@@ -22,6 +22,8 @@ This module adds an implementation of [graphiql](https://github.com/graphql/grap
 
 This is because GraphQL 4 has its own `DevelopmentAdmin` controller.
 
+The GraphQL v4 version of the module allows you to clear your schema by calling the `/dev/graphql/clear` task.
+
 ## Security
 
 By default, the tool has the same restrictions as other development tools like `dev/build`:
@@ -101,4 +103,3 @@ SilverStripe\Control\Director:
  CDN to download the latest distribution and drop it into this repository. Be sure
  to update the comment at the top of the `bundle.js` file to track the URL it was
  downloaded from.
- 
