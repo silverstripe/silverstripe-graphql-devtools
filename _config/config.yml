@@ -21,6 +21,10 @@ SilverStripe\GraphQL\Dev\DevelopmentAdmin:
       controller: 'SilverStripe\GraphQLDevTools\Controller'
       links:
         ide: Run the GraphQL IDE
+    clear:
+      controller: SilverStripe\GraphQLDevTools\Clear
+      links:
+        clear: Clear the GraphQL schema
 
 ---
 Name: graphql3-devtool-routes
