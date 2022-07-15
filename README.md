@@ -1,4 +1,7 @@
 # Dev tools for silverstripe-graphql
+
+[![CI](https://github.com/silverstripe/silverstripe-graphql-devtools/actions/workflows/ci.yml/badge.svg)](https://github.com/silverstripe/silverstripe-graphql-devtools/actions/workflows/ci.yml)
+
 Tools to help developers building new applications on SilverStripe’s GraphQL API
 
 ## Installation
