@@ -20,7 +20,7 @@
   },
   "extra": {
     "expose": [
-        "client/"
+        "client"
     ]
   },
   "config": {
