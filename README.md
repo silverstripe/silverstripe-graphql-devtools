@@ -6,13 +6,10 @@
 Tools to help developers building new applications on SilverStripe’s GraphQL API
 
 ## Installation
-```
-$ composer require --dev silverstripe/graphql-devtools
-```
 
-## Requirements
-
-* [silverstripe/graphql](https://github.com/silverstripe/silverstripe-graphql)
+```sh
+composer require --dev silverstripe/graphql-devtools
+```
 
 ## What it does
 
@@ -22,9 +19,9 @@ This module adds an implementation of [graphiql](https://github.com/graphql/grap
 
 **In GraphQL 3.x**, it can be accessed at `/dev/graphiql/`.
 
-**In GraphQL 4.x**, it can be accessed at `/dev/graphql/ide`.
+**In GraphQL 4.x+**, it can be accessed at `/dev/graphql/ide`.
 
-This is because GraphQL 4 has its own `DevelopmentAdmin` controller.
+This is because GraphQL 4+ has its own `DevelopmentAdmin` controller.
 
 The GraphQL v4 version of the module allows you to clear your schema by calling the `/dev/graphql/clear` task.
 
@@ -41,7 +38,7 @@ By default, the tool has the same restrictions as other development tools like `
  
  ## Configuration
  
- In most installations of SilverStripe, there are at least two GraphQL servers running -- one
+ In most installations of SilverStripe, there are at least two GraphQL servers running - one
  for the admin (`admin/graphql`) and one for the user space (`/graphql`). By default, only
  the `default` schema will show, but this is configurable.
  
@@ -79,11 +76,11 @@ e.g. `http://example.com/dev/graphql/ide?schema=mySchema`.
 ## If you're using a custom controller for your GraphQL endpoint
 
 The IDE finds schemas by checking `Director` for routes that map to a `SilverStripe\GraphQL\Controller` instance.
-If for some reason you're using a custom controller, you might get an error: "Could not find your default schema 'default'. You will need to add one to the SilverStripe\Control\Director.rules config setting."
+If for some reason you're using a custom controller, you might get an error: "Could not find your default schema 'default'. You will need to add one to the `SilverStripe\Control\Director.rules` config setting."
 
 To avoid this, you can explicitly map your graphql route to a schema in your Director config:
 
-```
+```yaml
 SilverStripe\Control\Director:
   rules:
     graphql:
