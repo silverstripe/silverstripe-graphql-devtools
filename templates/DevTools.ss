@@ -7,7 +7,7 @@
     <title>GraphQL IDE | Silverstripe CMS</title>
     <link rel="shortcut icon" href="$resourceURL('silverstripe/graphql-devtools: client/favicon.png')" />
     <% require javascript('silverstripe/graphql-devtools: client/bundle.js') %>
-    
+
     <style>
         html, body {
             margin: 0;
@@ -91,22 +91,5 @@
         <span class="title">GraphQL Playground</span>
     </div>
 </div>
-<script>window.addEventListener('load', function (event) {
-    GraphQLPlayground.init(document.getElementById('root'), {
-        headers: {
-            'X-CSRF-TOKEN': '$SecurityID',
-        },
-        endpoint: '$Endpoint',
-        settings: {
-            'request.globalHeaders': {
-                'X-CSRF-TOKEN': '$SecurityID'
-            },
-            'request.credentials': 'include',
-        },
-        <% if $TabsJSON %>
-        tabs: $TabsJSON.RAW
-        <% end_if %>
-    })
-})</script>
 </body>
 </html>
