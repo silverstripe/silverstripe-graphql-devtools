@@ -11,6 +11,7 @@ use SilverStripe\Core\Injector\InjectorNotFoundException;
 use SilverStripe\Core\Path;
 use SilverStripe\GraphQL\Schema\Schema;
 use SilverStripe\Security\SecurityToken;
+use SilverStripe\View\Requirements;
 
 class Controller extends BaseController
 {
@@ -34,26 +35,51 @@ class Controller extends BaseController
     public function index(HTTPRequest $request)
     {
         $routes = $this->getRoutes();
-        $json = null;
+        $endpoint = sizeof($routes ?? []) === 1 ? $routes[0] : null;
+        $csrf = SecurityToken::inst()->getValue();
+        $tabs = [];
         if (sizeof($routes ?? []) > 1) {
-            $tabs = [];
             foreach ($routes as $route) {
                 $tabs[] = [
                     'endpoint' => Director::absoluteURL($route),
                     'query' => '',
                     'name' => $route,
                     'headers' => [
-                        'X-CSRF-TOKEN' => SecurityToken::inst()->getValue(),
+                        'X-CSRF-TOKEN' => $csrf,
                     ]
                 ];
             }
-
-            $json = json_encode($tabs);
         }
 
+        $data = [
+            'headers' => [
+                'X-CSRF-TOKEN' => $csrf,
+            ],
+            'endpoint' => $endpoint,
+            'settings' => [
+                'request.globalHeaders' => [
+                    'X-CSRF-TOKEN' => $csrf,
+                ],
+                'request.credentials' => 'include',
+            ],
+        ];
+
+        if ($tabs) {
+            $data['tabs'] = $tabs;
+        }
+
+        $jsonPayload = json_encode($data);
+
+        Requirements::customScript(<<<JS
+          window.addEventListener('load', function (event) {
+            GraphQLPlayground.init(document.getElementById('root'), $jsonPayload)
+          });
+        JS
+        );
+
         return [
-            'Endpoint' => sizeof($routes ?? []) === 1 ? $routes[0] : null,
-            'TabsJSON' => $json,
+            'Endpoint' => $endpoint,
+            'TabsJSON' => $tabs ? json_encode($tabs): null,
         ];
     }
 
