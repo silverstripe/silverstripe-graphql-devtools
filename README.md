@@ -88,6 +88,29 @@ SilverStripe\Control\Director:
       Schema: default
 ```
 
+## GraphQL schema initialise task
+
+This module provides a `GraphQLSchemaInitTask` task to initialise a basic GraphQL schema to get you started. It will create configuration files for your schema and a basic resolver. Specifically it will create:
+
+- `app/_config/graphql.yml`
+- `app/_graphql` containing several yml files
+- `src/GraphQL/Resolvers.php`
+
+You must be in CLI mode to use this task
+
+To view help for the task to see what options are available:
+
+```bash
+vendor/bin/sake dev/tasks/GraphQLSchemaInitTask help=1
+```
+
+To run the task with with minimal options:
+
+```bash
+vendor/bin/sake dev/tasks/GraphQLSchemaInitTask namespace=App
+```
+
+
 ## Upgrading and maintaining the IDE
  
  The library running the IDE is [GraphQL Playground](https://github.com/graphql/graphql-playground).
