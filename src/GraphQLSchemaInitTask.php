@@ -2,25 +2,26 @@
 
 namespace SilverStripe\GraphQLDevTools;
 
-use SilverStripe\Control\Director;
-use SilverStripe\Control\HTTPRequest;
+use Composer\Console\Input\InputOption;
 use SilverStripe\Core\Manifest\ModuleManifest;
 use SilverStripe\Core\Path;
 use SilverStripe\Dev\BuildTask;
-use SilverStripe\GraphQL\Config\Configuration;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * A task that initialises a GraphQL 4+ schema with boilerplate config and files.
  */
 class GraphQLSchemaInitTask extends BuildTask
 {
-    private static $segment = 'GraphQLSchemaInitTask';
+    private static bool $can_run_in_cli = false;
 
-    protected $enabled = true;
+    protected static string $commandName = 'GraphQLSchemaInitTask';
 
-    protected $title = 'Initialise a new GraphQL schema';
+    protected static string $description = 'Boilerplate setup for a new GraphQL schema';
 
-    protected $description = 'Boilerplate setup for a new GraphQL schema';
+    protected string $title = 'Initialise a new GraphQL schema';
 
     private string $appNamespace;
 
@@ -38,79 +39,38 @@ class GraphQLSchemaInitTask extends BuildTask
 
     private string $perms = '';
 
-    /**
-     * @param HTTPRequest $request
-     */
-    public function run($request)
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        if (!Director::is_cli()) {
-            echo "This task can only be run from CLI\n";
-            return;
-        }
-
-        if (!class_exists(Configuration::class)) {
-            echo "This task requires GraphQL v4+ to be installed\n";
-            return;
-        }
-
-        if ($request->getVar('help')) {
-            $this->showHelp();
-            return;
-        }
-
-        $appNamespace = $request->getVar('namespace');
-
-        if (!$appNamespace) {
-            $segment = static::$segment;
-            echo "Please provide a base namespace for your app, e.g. \"namespace=App\" or \"namespace=MyVendor\MyProject\".\nFor help, run \"dev/tasks/$segment help=1\"\n";
-            return;
-        }
-
-        $this->appNamespace = $appNamespace;
-
         $this->projectDir = ModuleManifest::config()->get('project');
+        $this->appNamespace = $input->getOption('namespace');
+        $this->schemaName = $input->getOption('name');
+        $this->graphqlConfigDir = $input->getOption('graphqlConfigDir');
+        $this->graphqlCodeDir = $input->getOption('graphqlCodeDir');
+        $this->endpoint = $input->getOption('endpoint');
+        $this->srcDir = $input->getOption('srcDir');
 
-        $schemaName = $request->getVar('name');
-        if ($schemaName) {
-            $this->schemaName = $schemaName;
-        }
-
-        $graphqlConfigDir = $request->getVar('graphqlConfigDir');
-        if ($graphqlConfigDir) {
-            $this->graphqlConfigDir = $graphqlConfigDir;
-        }
-
-        $graphqlCodeDir = $request->getVar('graphqlCodeDir');
-        if ($graphqlCodeDir) {
-            $this->graphqlCodeDir = $graphqlCodeDir;
-        }
-
-        $endpoint = $request->getVar('endpoint');
-        if ($endpoint) {
-            $this->endpoint = $endpoint;
-        }
-
-        $srcDir = $request->getVar('srcDir');
-        if ($srcDir) {
-            $this->srcDir = $srcDir;
+        if (!$this->appNamespace) {
+            $output->writeln('Please provide a base namespace for your app, e.g. <info>--namespace=App</info> or <info>--namespace=MyVendor\MyProject</info>');
+            return Command::INVALID;
         }
 
         $absProjectDir = Path::join(BASE_PATH, $this->projectDir);
         $this->perms = fileperms($absProjectDir);
 
-        $this->createGraphQLConfig();
-        $this->createProjectConfig();
-        $this->createResolvers();
+        $this->createGraphQLConfig($output);
+        $this->createProjectConfig($output);
+        $this->createResolvers($output);
+        return Command::SUCCESS;
     }
 
     /**
      * Creates the SS config in _config/graphql.yml
      */
-    private function createProjectConfig(): void
+    private function createProjectConfig(PolyOutput $output): void
     {
         $absConfigFile = Path::join(BASE_PATH, $this->projectDir, '_config', 'graphql.yml');
         if (file_exists($absConfigFile)) {
-            echo "Config file $absConfigFile already exists. Skipping." . PHP_EOL;
+            $output->writeln("Config file $absConfigFile already exists. Skipping.");
             return;
         }
 
@@ -138,7 +98,7 @@ class GraphQLSchemaInitTask extends BuildTask
         SilverStripe\Control\Director:
           rules:
         $rules
-        
+
         SilverStripe\GraphQL\Schema\Schema:
           schemas:
             $this->schemaName:
@@ -154,15 +114,15 @@ class GraphQLSchemaInitTask extends BuildTask
     /**
      * Creates the graphql schema specific config in _graphql/
      */
-    private function createGraphQLConfig(): void
+    private function createGraphQLConfig(PolyOutput $output): void
     {
         $absGraphQLDir = Path::join(BASE_PATH, $this->projectDir, $this->graphqlConfigDir);
         if (is_dir($absGraphQLDir)) {
-            echo "GraphQL config directory already exists. Skipping." . PHP_EOL;
+            $output->writeln("GraphQL config directory already exists. Skipping.");
             return;
         }
 
-        echo "Creating graphql config directory: $this->graphqlConfigDir" . PHP_EOL;
+        $output->writeln("Creating graphql config directory: $this->graphqlConfigDir");
         mkdir($absGraphQLDir, $this->perms);
         foreach (['models', 'config', 'types', 'queries', 'mutations'] as $file) {
             touch(Path::join($absGraphQLDir, "$file.yml"));
@@ -190,7 +150,7 @@ class GraphQLSchemaInitTask extends BuildTask
     /**
      * Creates an example resolvers class for autodiscovery in app/src/GraphQL/Resolvers.php
      */
-    private function createResolvers(): void
+    private function createResolvers(PolyOutput $output): void
     {
         $absSrcDir = Path::join(BASE_PATH, $this->projectDir, $this->srcDir);
         $absGraphQLCodeDir = Path::join($absSrcDir, $this->graphqlCodeDir);
@@ -199,11 +159,11 @@ class GraphQLSchemaInitTask extends BuildTask
             str_replace('/', '\\', $this->graphqlCodeDir)
         ]);
         if (is_dir($absGraphQLCodeDir)) {
-            echo "GraphQL code dir $this->graphqlCodeDir already exists. Skipping" . PHP_EOL;
+            $output->writeln("GraphQL code dir $this->graphqlCodeDir already exists. Skipping");
             return;
         }
 
-        echo "Creating resolvers class in $graphqlNamespace" . PHP_EOL;
+        $output->writeln("Creating resolvers class in $graphqlNamespace");
         mkdir($absGraphQLCodeDir, $this->perms, true);
         $resolverFile = Path::join($absGraphQLCodeDir, 'Resolvers.php');
         $moreInfo = 'https://docs.silverstripe.org/en/developer_guides/graphql/'
@@ -235,44 +195,30 @@ class GraphQLSchemaInitTask extends BuildTask
         file_put_contents($resolverFile, $resolverCode);
     }
 
-    /**
-     * Outputs help text to the console
-     */
-    private function showHelp(): void
+    public function getOptions(): array
     {
-        $segment = static::$segment;
-        echo <<<TXT
+        return [
+            new InputOption('namespace', null, InputOption::VALUE_REQUIRED, 'The root namespace (required)'),
+            new InputOption('name', null, InputOption::VALUE_REQUIRED, 'The name of the schema', 'default'),
+            new InputOption('graphqlConfigDir', null, InputOption::VALUE_REQUIRED, 'The folder where the flushless graphql config files will go', '_graphql'),
+            new InputOption(
+                'graphqlCodeDir',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'The subfolder of src/ where your GraphQL code (the resolver class) will go. Follows PSR-4 based on the namespace argument',
+                'GraphQL'
+            ),
+            new InputOption('endpoint', null, InputOption::VALUE_REQUIRED, 'The endpoint to use for the schema', 'graphql'),
+            new InputOption('srcDir', null, InputOption::VALUE_REQUIRED, 'The subfolder of the project directory where the src code lives', 'src'),
+        ];
+    }
 
-        ****
+    public static function getHelp(): string
+    {
+        return <<<TXT
         This task executes a lot of the boilerplate required to build a new GraphQL schema. It will
         generate a few files in your project directory. Any files that already exist will not be
         overwritten. The task can be run multiple times and is non-destructive.
-        ****
-
-        -- Example:
-
-        $ vendor/bin/sake dev/tasks/$segment namespace="MyAgency\MyApp"
-
-        -- Arguments:
-
-        namespace
-        The root namespace. Required.
-
-        name
-        The name of the schema. Default: "default" (optional)
-
-        graphqlConfigDir
-        The folder where the flushless graphql config files will go. Default: "_graphql" (optional)
-
-        graphqlCodeDir
-        The subfolder of src/ where your GraphQL code (the resolver class) will go. Follows PSR-4 based on the namespace argument. Default: "GraphQL". (optional)
-
-        endpoint
-        The endpoint to use for the schema. Default: "graphql" (optional)
-
-        srcDir
-        The subfolder of the project directory where the src code lives. Default: "src" (optional)
-
         TXT;
     }
 }
