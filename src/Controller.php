@@ -8,10 +8,10 @@ use SilverStripe\GraphQL\Controller as GraphQLController;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Injector\InjectorNotFoundException;
-use SilverStripe\Core\Path;
 use SilverStripe\GraphQL\Schema\Schema;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\View\Requirements;
+use Symfony\Component\Filesystem\Path;
 
 class Controller extends BaseController
 {
@@ -127,7 +127,7 @@ class Controller extends BaseController
             $explicitSchema = $controllerInfo['Schema'] ?? null;
             if ($explicitSchema) {
                 if ($schemas === '*' || in_array($explicitSchema, $schemas ?? [])) {
-                    $routes[$explicitSchema] = Path::normalise($pattern, true);
+                    $routes[$explicitSchema] = trim(Path::normalize($pattern), '/');
                 }
                 continue;
             }
@@ -138,7 +138,7 @@ class Controller extends BaseController
                         ? $routeController->getSchemaKey()
                         : $routeController->getManager()->getSchemaKey();
                     if ($schemas === '*' || in_array($schemaKey, $schemas ?? [])) {
-                        $routes[$schemaKey] = Path::normalise($pattern, true);
+                        $routes[$schemaKey] = trim(Path::normalize($pattern), '/');
                     }
                 }
             } catch (InjectorNotFoundException $ex) {

@@ -5,9 +5,9 @@ namespace SilverStripe\GraphQLDevTools;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Manifest\ModuleManifest;
-use SilverStripe\Core\Path;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\GraphQL\Config\Configuration;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * A task that initialises a GraphQL 4+ schema with boilerplate config and files.
@@ -138,7 +138,7 @@ class GraphQLSchemaInitTask extends BuildTask
         SilverStripe\Control\Director:
           rules:
         $rules
-        
+
         SilverStripe\GraphQL\Schema\Schema:
           schemas:
             $this->schemaName:
