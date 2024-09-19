@@ -26,7 +26,7 @@ class Clear extends Controller
     public function __construct()
     {
         parent::__construct();
-        Deprecation::withNoReplacement(function () {
+        Deprecation::withSuppressedNotice(function () {
             Deprecation::notice(
                 '1.1.0',
                 'Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear',
