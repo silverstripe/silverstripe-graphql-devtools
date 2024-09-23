@@ -26,6 +26,11 @@ class Clear extends Controller
     public function __construct()
     {
         parent::__construct();
+        if (!method_exists(Deprecation::class, 'withSuppressedNotice')
+            || !method_exists(Deprecation::class, 'notice')
+        ) {
+            return;
+        }
         Deprecation::withSuppressedNotice(function () {
             Deprecation::notice(
                 '1.1.0',
