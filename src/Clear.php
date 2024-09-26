@@ -5,10 +5,14 @@ use Psr\Log\LoggerInterface;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Dev\Deprecation;
 use SilverStripe\GraphQL\Schema\Storage\CodeGenerationStore;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * @deprecated 1.1.0 Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear
+ */
 class Clear extends Controller
 {
     private static $url_handlers = [
@@ -18,6 +22,23 @@ class Clear extends Controller
     private static $allowed_actions = [
         'clear',
     ];
+
+    public function __construct()
+    {
+        parent::__construct();
+        if (!method_exists(Deprecation::class, 'withSuppressedNotice')
+            || !method_exists(Deprecation::class, 'notice')
+        ) {
+            return;
+        }
+        Deprecation::withSuppressedNotice(function () {
+            Deprecation::notice(
+                '1.1.0',
+                'Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear',
+                Deprecation::SCOPE_CLASS
+            );
+        });
+    }
 
     public function clear(HTTPRequest $request): void
     {
