@@ -16,17 +16,15 @@ This module adds an implementation of [graphiql](https://github.com/graphql/grap
 
 ### Accessing the IDE 
 
-**In GraphQL 3.x**, it can be accessed at `/dev/graphiql/`.
-
-**In GraphQL 4.x+**, it can be accessed at `/dev/graphql/ide`.
+It can be accessed at `/dev/graphql/ide`.
 
 This is because GraphQL 4+ has its own `DevelopmentAdmin` controller.
 
-The GraphQL v4 version of the module allows you to clear your schema by calling the `/dev/graphql/clear` task.
+The GraphQL v4 version of the module allows you to clear your schema by running `sake graphql:clear`.
 
 ## Security
 
-By default, the tool has the same restrictions as other development tools like `dev/build`:
+By default, the tool has the same restrictions as other development tools like `/dev/build`:
 
  * In "dev" mode, it's available without authentication
  * In "test" and "live" mode, it requires ADMIN permissions
@@ -100,13 +98,13 @@ You must be in CLI mode to use this task
 To view help for the task to see what options are available:
 
 ```bash
-vendor/bin/sake dev/tasks/GraphQLSchemaInitTask help=1
+vendor/bin/sake tasks:GraphQLSchemaInitTask --help
 ```
 
 To run the task with with minimal options:
 
 ```bash
-vendor/bin/sake dev/tasks/GraphQLSchemaInitTask namespace=App
+vendor/bin/sake tasks:GraphQLSchemaInitTask --namespace=App
 ```
 
 

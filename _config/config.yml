@@ -9,33 +9,14 @@ SilverStripe\GraphQLDevTools\Controller:
   default_schema: default
 
 ---
-Name: graphql4-devtool-routes
+Name: devtool-routes
 After:
   - 'graphql-dev'
-Only:
-  classexists: 'SilverStripe\GraphQL\Schema\Schema'
 ---
 SilverStripe\GraphQL\Dev\DevelopmentAdmin:
-  registered_controllers:
-    ide:
-      controller: 'SilverStripe\GraphQLDevTools\Controller'
-      links:
-        ide: Run the GraphQL IDE
-    clear:
-      controller: SilverStripe\GraphQLDevTools\Clear
-      links:
-        clear: Clear the GraphQL schema
-
----
-Name: graphql3-devtool-routes
-After:
-  - 'graphql-dev'
-Except:
-  classexists: 'SilverStripe\GraphQL\Schema\Schema'
----
-SilverStripe\Dev\DevelopmentAdmin:
-  registered_controllers:
-    graphiql:
-      controller: 'SilverStripe\GraphQLDevTools\Controller'
-SilverStripe\GraphQLDevTools\Controller:
-  default_route: 'graphql'
+  commands:
+    'graphql/clear': 'SilverStripe\GraphQLDevTools\SchemaClear'
+  controllers:
+    'graphql/ide':
+      class: 'SilverStripe\GraphQLDevTools\Controller'
+      description: Run the GraphQL IDE
