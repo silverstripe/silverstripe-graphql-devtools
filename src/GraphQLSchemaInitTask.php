@@ -2,13 +2,13 @@
 
 namespace SilverStripe\GraphQLDevTools;
 
-use Composer\Console\Input\InputOption;
 use SilverStripe\Core\Manifest\ModuleManifest;
 use SilverStripe\Core\Path;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\PolyExecution\PolyOutput;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * A task that initialises a GraphQL 4+ schema with boilerplate config and files.
