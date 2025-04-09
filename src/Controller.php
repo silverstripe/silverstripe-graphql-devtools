@@ -27,6 +27,10 @@ class Controller extends BaseController
      */
     private static $schemas = [];
 
+    private static array $url_handlers = [
+        'ide' => 'index',
+    ];
+
     /**
      * @var string
      */
