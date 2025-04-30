@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @deprecated 1.1.0 Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear
+ * @deprecated 1.1.0 Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear in a future major release
  */
 class Clear extends Controller
 {
@@ -34,7 +34,7 @@ class Clear extends Controller
         Deprecation::withSuppressedNotice(function () {
             Deprecation::notice(
                 '1.1.0',
-                'Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear',
+                'Will be replaced with SilverStripe\GraphQLDevTools\SchemaClear in a future major release',
                 Deprecation::SCOPE_CLASS
             );
         });
