@@ -3,93 +3,106 @@
 
 <head>
     <meta charset=utf-8/>
-    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GraphQL IDE | Silverstripe CMS</title>
     <link rel="shortcut icon" href="$resourceURL('silverstripe/graphql-devtools: client/favicon.png')" />
-    <% require javascript('silverstripe/graphql-devtools: client/bundle.js') %>
-
+    <link rel="stylesheet" href="$resourceURL('silverstripe/graphql-devtools: client/graphiql.min.css')" />
     <style>
-        html, body {
+        body {
             margin: 0;
-            padding: 0;
-            overflow: hidden;
+        }
+
+        #schema-selector {
+            display: none;
+            padding: 6px 16px;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: sans-serif;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        #schema-selector.visible {
+            display: flex;
+        }
+
+        #schema-selector select {
+            background: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #graphiql {
+            height: 100vh;
+        }
+
+        body.has-selector #graphiql {
+            height: calc(100vh - 37px);
         }
     </style>
 </head>
 
 <body>
-<div id="root">
-    <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            color: rgba(0,0,0,.8);
-            line-height: 1.5;
-            height: 100vh;
-            letter-spacing: 0.53px;
-            margin-right: -1px !important;
-        }
-
-        #root {
-            height: 100%;
-        }
-
-        html, body, p, a, h1, h2, h3, h4, ul, pre, code {
-            margin: 0;
-            padding: 0;
-            color: inherit;
-        }
-
-        a:active, a:focus, button:focus, input:focus {
-            outline: none;
-        }
-
-        input, button, submit {
-            border: none;
-        }
-
-        input, button, pre {
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        code {
-            font-family: Consolas, monospace;
-        }
-        body {
-            background-color: rgb(23, 42, 58);
-            font-family: Open Sans, sans-serif;
-            height: 90vh;
-        }
-
-        #root {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .loading {
-            font-size: 32px;
-            font-weight: 200;
-            color: rgba(255, 255, 255, .6);
-            margin-left: 20px;
-        }
-
-        img {
-            width: 78px;
-            height: 78px;
-        }
-
-        .title {
-            font-weight: 400;
-        }
-    </style>
-    <img src="$resourceURL('silverstripe/graphql-devtools: client/logo.png')" alt=''>
-    <div class="loading"> Loading
-        <span class="title">GraphQL Playground</span>
+    <div id="schema-selector">
+        <label for="schema-select">Schema:</label>
+        <select id="schema-select"></select>
     </div>
-</div>
+    <div id="graphiql">Loading...</div>
+
+    <!-- GraphiQL standalone bundle (offline-capable, no build step required).
+         Versions: React 18.3.1, GraphiQL 3.9.0
+         To upgrade: download replacements from unpkg.com and overwrite the files in client/
+           https://unpkg.com/react@{version}/umd/react.production.min.js
+           https://unpkg.com/react-dom@{version}/umd/react-dom.production.min.js
+           https://unpkg.com/graphiql@{version}/graphiql.min.js
+           https://unpkg.com/graphiql@{version}/graphiql.min.css -->
+    <script src="$resourceURL('silverstripe/graphql-devtools: client/react.production.min.js')"></script>
+    <script src="$resourceURL('silverstripe/graphql-devtools: client/react-dom.production.min.js')"></script>
+    <script src="$resourceURL('silverstripe/graphql-devtools: client/graphiql.min.js')"></script>
+    <script>
+        (function () {
+            var endpoint = "$GraphiQLEndpoint.RAW";
+            var tabs = $GraphiQLTabsJSON.RAW;
+            var csrf = "$GraphiQLCSRF.JS";
+            var graphiqlRoot = null;
+
+            function makeFetcher(url) {
+                return GraphiQL.createFetcher({
+                    url: url,
+                    headers: { 'X-CSRF-TOKEN': csrf }
+                });
+            }
+
+            function renderGraphiQL(url) {
+                if (!graphiqlRoot) {
+                    graphiqlRoot = ReactDOM.createRoot(document.getElementById('graphiql'));
+                }
+                graphiqlRoot.render(React.createElement(GraphiQL, { fetcher: makeFetcher(url) }));
+            }
+
+            if (Array.isArray(tabs) && tabs.length > 0) {
+                var selector = document.getElementById('schema-selector');
+                var select = document.getElementById('schema-select');
+                selector.classList.add('visible');
+                document.body.classList.add('has-selector');
+                tabs.forEach(function (tab) {
+                    var option = document.createElement('option');
+                    option.value = tab.endpoint;
+                    option.textContent = tab.name;
+                    select.appendChild(option);
+                });
+                select.addEventListener('change', function () {
+                    renderGraphiQL(this.value);
+                });
+                renderGraphiQL(tabs[0].endpoint);
+            } else if (endpoint) {
+                renderGraphiQL(endpoint);
+            }
+        })();
+    </script>
 </body>
 </html>
