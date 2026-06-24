@@ -40,21 +40,14 @@ class Controller extends BaseController
         $routes = $this->getRoutes();
         $csrf = SecurityToken::inst()->getValue();
 
-        $endpoints = array_map(function ($route) {
-            return Director::absoluteURL($route);
-        }, $routes);
-
-        $tabs = null;
-        if (count($endpoints) > 1) {
-            $tabs = [];
-            foreach (array_values($routes) as $i => $route) {
-                $tabs[] = ['endpoint' => $endpoints[$i], 'name' => $route];
-            }
+        $tabs = [];
+        foreach ($routes as $route) {
+            $tabs[] = ['endpoint' => Director::absoluteURL($route), 'name' => $route];
         }
 
         return [
-            'GraphiQLEndpoint' => $endpoints[0] ?? null,
-            'GraphiQLTabsJSON' => $tabs ? json_encode($tabs, JSON_HEX_TAG) : 'null',
+            'GraphiQLEndpoint' => $tabs[0]['endpoint'] ?? null,
+            'GraphiQLTabsJSON' => count($tabs) > 1 ? json_encode($tabs, JSON_HEX_TAG) : 'null',
             'GraphiQLCSRF' => $csrf,
         ];
     }
