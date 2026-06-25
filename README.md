@@ -31,8 +31,6 @@ By default, the tool has the same restrictions as other development tools like `
  * It's installed with `composer require --dev` by default. In most deployment contexts that'll mean it's not available on environments in "test" or "live" modes
 
  
- <img src="https://github.com/graphql/graphiql/raw/master/resources/graphiql.png">
- 
  ## Configuration
  
  In most installations of SilverStripe, there are at least two GraphQL servers running - one
@@ -40,11 +38,6 @@ By default, the tool has the same restrictions as other development tools like `
  the `default` schema will show, but this is configurable.
  
  ### Showing multiple schemas
- 
- **Important**: Due to a limitation in the GraphQL Playground library, showing multiple schemas
- will disable the persistence of IDE state across page refreshes.
- 
- **Also important**: When changing the available schemas, be sure to clear the local storage in your browser, otherwise, you'll get inconsistent state.
  
  You can configure the visible schemas in the controller.
 
@@ -109,18 +102,21 @@ vendor/bin/sake tasks:GraphQLSchemaInitTask --namespace=App
 
 
 ## Upgrading and maintaining the IDE
- 
- The library running the IDE is [GraphQL Playground](https://github.com/graphql/graphql-playground).
- It is served from your local environment as an exposed resource. The
- setup is based on their "HTML Page" example [seen here](https://github.com/graphql/graphql-playground#as-html-page), which uses remote bundle files served from a CDN. This repository
- uses a manually created bundle file copied directly from the CDN.
- This may seem like a convoluted approach, but the main benefits are:
- 
- * It allows offline use
- * It does not require setting up a build chain or installing NPM dependencies
- * There is no need for SRI protection
- 
- To upgrade GraphQL Playground, refer to the example linked above and use their 
- CDN to download the latest distribution and drop it into this repository. Be sure
- to update the comment at the top of the `bundle.js` file to track the URL it was
- downloaded from.
+
+The library running the IDE is [GraphiQL](https://github.com/graphql/graphiql).
+It is served from your local environment as an exposed resource, with no CDN
+dependency and no build chain required. The bundled files are:
+
+* `client/react.production.min.js`
+* `client/react-dom.production.min.js`
+* `client/graphiql.min.js`
+* `client/graphiql.min.css`
+
+The benefits of this approach are:
+
+* It allows offline use
+* It does not require setting up a build chain or installing NPM dependencies
+
+To upgrade GraphiQL, download the new versions from [unpkg.com](https://unpkg.com)
+and overwrite the files in `client/`. The exact URLs and currently bundled versions
+are noted in the comment above the `<script>` tags in `templates/DevTools.ss`.
