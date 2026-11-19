@@ -4,13 +4,13 @@
   "type": "silverstripe-vendormodule",
   "license": "BSD-3-Clause",
   "require": {
-    "silverstripe/graphql": "^6",
+    "silverstripe/graphql": "^7",
     "symfony/finder": "^7",
     "symfony/filesystem": "^7"
     },
   "require-dev": {
     "phpunit/phpunit": "^11.3",
-    "silverstripe/framework": "^6",
+    "silverstripe/framework": "^7",
     "squizlabs/php_codesniffer": "^3"
   },
   "autoload": {
